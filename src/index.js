@@ -1,6 +1,8 @@
 import express from 'express'
 const app=express()
 
+app.use(express.json())
+app.use(express.text())
 
 app.get('/',(req,res)=>{
     res.send({msg:'Hello'});
@@ -25,6 +27,12 @@ app.get('/api/users', (req, res) => {
 
 });
 
+app.post('/api/users',(req,res)=>{
+    const {body}=req
+    return mockUsers.filter((user)=>user[body].inclu)
+});
+
+
 app.get('/api/users/:id',(req,res)=>{
     const id=parseInt(req.params.id);
     if(isNaN(id)){
@@ -37,6 +45,10 @@ app.get('/api/users/:id',(req,res)=>{
 
 app.get('/api/products/:id',(req,res)=>{
     res.send([{id:123,name:'chicken breast',price:299}])
+})
+
+app.put('/api/users/:id',(req,res)=>{
+    
 })
 
 const PORT=process.env.PORT||3000;
