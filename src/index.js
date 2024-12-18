@@ -1,12 +1,35 @@
 import express from 'express'
+import {query} from 'express-validator'
+
 const app=express()
 
-app.use(express.json())
+app.use(express.json()) 
 app.use(express.text())
 
-app.get('/',(req,res)=>{
-    res.send({msg:'Hello'});
+const loggingMiddleware=(req,res,next)=>{
+    console.log(`${req.method}-${req.url}`);
+    next();
+};
+
+
+app.use(loggingMiddleware);
+
+app.get('/',(req,res,next)=>{
+    console.log("Base");
+    next();
+},(req,res)=>{
+    res.send("HELLO");
 })
+
+const resolveIndexByUserId=(req,res,next)=>{
+    const {
+        body,
+        params:{id},
+    }=req;
+    const parsedId=parseInt(id);
+
+}
+
 
 const mockUsers=[{ id: 1, username: 'john_doe', name: 'John Doe' },
     { id: 2, username: 'jane_smith', name: 'Jane Smith' },
@@ -15,7 +38,9 @@ const mockUsers=[{ id: 1, username: 'john_doe', name: 'John Doe' },
     { id: 5, username: 'david_lee', name: 'David Lee' },
     { id: 6, username: 'emma_white', name: 'Emma White' },]
 
-app.get('/api/users', (req, res) => {
+app.get('/api/users',
+    query('filter').isString().notEmpty(),
+     (req, res) => {
     console.log(req.query);
     //console.log(req);
     const {query:{filter,values}}=req;
